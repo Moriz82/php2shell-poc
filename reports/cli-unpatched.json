@@ -1,0 +1,31 @@
+{
+  "generated_utc": "2026-10-22T01:09:28.879566+00:00",
+  "scope": "local Docker images only; bounded normal HTTP parsing and upstream version checks",
+  "advisories": [
+    "CVE-2026-109618",
+    "CVE-2026-109619"
+  ],
+  "results": [
+    {
+      "image": "php:8.3-cli",
+      "image_id": "sha256:aafe21201943a8a6e497ddfb471e2ce68ada76adede38c7d61fede8918b24319",
+      "sapi": "cli",
+      "runtime": {
+        "version": "8.3.35",
+        "sapi": "cli",
+        "memory_limit": "128M"
+      },
+      "release_status": "below-upstream-fix",
+      "pass": true,
+      "web_request_cases": "not-applicable"
+    }
+  ],
+  "all_cases_pass": true,
+  "patch_summary": {
+    "at_or_above_fix": [],
+    "below_fix": [
+      "php:8.3-cli"
+    ],
+    "unknown": []
+  }
+}

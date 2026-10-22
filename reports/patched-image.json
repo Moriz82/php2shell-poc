@@ -1,0 +1,372 @@
+{
+  "generated_utc": "2026-10-22T01:09:24.355592+00:00",
+  "scope": "local Docker images only; bounded normal HTTP parsing and upstream version checks",
+  "advisories": [
+    "CVE-2026-109618",
+    "CVE-2026-109619"
+  ],
+  "results": [
+    {
+      "image": "php:8.4.27-apache",
+      "image_id": "sha256:a0b75cee7023ba2c127138dcad2ecc6ec7e09435534645e70450f29f24ea2a5a",
+      "sapi": "apache2handler",
+      "profiles": [
+        {
+          "profile": "image-default",
+          "runtime": {
+            "version": "8.4.27",
+            "sapi": "apache2handler",
+            "memory_limit": "128M",
+            "upload_progress_enabled": "1"
+          },
+          "release_status": "at-or-above-upstream-fix",
+          "configuration_pass": true,
+          "cases": [
+            {
+              "case": "baseline",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "sapi": "apache2handler"
+              },
+              "observed": {
+                "sapi": "apache2handler"
+              }
+            },
+            {
+              "case": "urlencoded",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "multipart",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "empty-file",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "file_error": 4
+              },
+              "observed": {
+                "file_error": 4
+              }
+            },
+            {
+              "case": "nested-field",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "nested": "one"
+              },
+              "observed": {
+                "nested": "one"
+              }
+            },
+            {
+              "case": "duplicate-fields",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "item_count": 2
+              },
+              "observed": {
+                "item_count": 2
+              }
+            },
+            {
+              "case": "extra-part-header",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "chunked-no-length",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "upload-progress",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "file_error": 0,
+                "file_size": 2
+              },
+              "observed": {
+                "file_error": 0,
+                "file_size": 2
+              }
+            }
+          ],
+          "pass": true
+        },
+        {
+          "profile": "low-memory",
+          "runtime": {
+            "version": "8.4.27",
+            "sapi": "apache2handler",
+            "memory_limit": "8M",
+            "upload_progress_enabled": "1"
+          },
+          "release_status": "at-or-above-upstream-fix",
+          "configuration_pass": true,
+          "cases": [
+            {
+              "case": "baseline",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "sapi": "apache2handler"
+              },
+              "observed": {
+                "sapi": "apache2handler"
+              }
+            },
+            {
+              "case": "urlencoded",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "multipart",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "empty-file",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "file_error": 4
+              },
+              "observed": {
+                "file_error": 4
+              }
+            },
+            {
+              "case": "nested-field",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "nested": "one"
+              },
+              "observed": {
+                "nested": "one"
+              }
+            },
+            {
+              "case": "duplicate-fields",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "item_count": 2
+              },
+              "observed": {
+                "item_count": 2
+              }
+            },
+            {
+              "case": "extra-part-header",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "chunked-no-length",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "upload-progress",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "file_error": 0,
+                "file_size": 2
+              },
+              "observed": {
+                "file_error": 0,
+                "file_size": 2
+              }
+            }
+          ],
+          "pass": true
+        },
+        {
+          "profile": "progress-disabled",
+          "runtime": {
+            "version": "8.4.27",
+            "sapi": "apache2handler",
+            "memory_limit": "8M",
+            "upload_progress_enabled": ""
+          },
+          "release_status": "at-or-above-upstream-fix",
+          "configuration_pass": true,
+          "cases": [
+            {
+              "case": "baseline",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "sapi": "apache2handler"
+              },
+              "observed": {
+                "sapi": "apache2handler"
+              }
+            },
+            {
+              "case": "urlencoded",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "multipart",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "empty-file",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "file_error": 4
+              },
+              "observed": {
+                "file_error": 4
+              }
+            },
+            {
+              "case": "nested-field",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "nested": "one"
+              },
+              "observed": {
+                "nested": "one"
+              }
+            },
+            {
+              "case": "duplicate-fields",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "item_count": 2
+              },
+              "observed": {
+                "item_count": 2
+              }
+            },
+            {
+              "case": "extra-part-header",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "chunked-no-length",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "alpha": "one"
+              },
+              "observed": {
+                "alpha": "one"
+              }
+            },
+            {
+              "case": "upload-progress",
+              "pass": true,
+              "http_status": 200,
+              "expected": {
+                "file_error": 0,
+                "file_size": 2
+              },
+              "observed": {
+                "file_error": 0,
+                "file_size": 2
+              }
+            }
+          ],
+          "pass": true
+        }
+      ],
+      "pass": true,
+      "release_status": "at-or-above-upstream-fix"
+    }
+  ],
+  "all_cases_pass": true,
+  "patch_summary": {
+    "at_or_above_fix": [
+      "php:8.4.27-apache"
+    ],
+    "below_fix": [],
+    "unknown": []
+  }
+}
