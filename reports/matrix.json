@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-22T02:18:30.166397+00:00",
+  "generated_utc": "2026-10-22T04:52:18.267191+00:00",
   "advisories": [
     "CVE-2026-109618",
     "CVE-2026-109619"
@@ -65,7 +65,7 @@
           "release_status": "below-upstream-fix"
         },
         "notes": [
-          "build is below PHP's fixed release; this shape exhausts memory but leaves no reclaimable stale state"
+          "build is below PHP's fixed release; the shape reaches the memory limit but leaves no reclaimable stale state"
         ]
       },
       {
@@ -159,7 +159,7 @@
           "release_status": "below-upstream-fix"
         },
         "notes": [
-          "build is below PHP's fixed release; this shape exhausts memory but leaves no reclaimable stale state"
+          "build is below PHP's fixed release; the shape reaches the memory limit but leaves no reclaimable stale state"
         ]
       },
       {
@@ -181,7 +181,7 @@
           "release_status": "below-upstream-fix"
         },
         "notes": [
-          "build is below PHP's fixed release; this shape exhausts memory but leaves no reclaimable stale state"
+          "build is below PHP's fixed release; the shape leaves no reclaimable stale state"
         ]
       },
       {
@@ -203,7 +203,7 @@
           "release_status": "below-upstream-fix"
         },
         "notes": [
-          "build is below PHP's fixed release; this shape exhausts memory but leaves no reclaimable stale state"
+          "build is below PHP's fixed release; the shape leaves no reclaimable stale state"
         ]
       },
       {
@@ -225,7 +225,7 @@
           "release_status": "below-upstream-fix"
         },
         "notes": [
-          "build is below PHP's fixed release; this shape exhausts memory but leaves no reclaimable stale state"
+          "build is below PHP's fixed release; the shape leaves no reclaimable stale state"
         ]
       },
       {
@@ -807,16 +807,22 @@
       "attempted": true,
       "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
       "notes": [],
+      "strategy": "measured",
+      "attempt": 3,
+      "reference": "0x7ffffc456180",
       "htdata": "0x7ffffc4690d8",
       "zif": "0x7ffffe478370",
-      "attempt": 1
+      "carrier_count": 3,
+      "pads": 6
     },
     "php:8.4.27-apache:default": {
       "attempted": false,
       "proof": "",
       "notes": [
-        "missing libphp base or zif_system offset"
-      ]
+        "measured strategy: shape 1: payload did not land; shape 2: payload did not land; shape 3: payload did not land; shape 4: payload did not land; shape 5: payload did not land; shape 6: payload did not land; shape 7: payload did not land; shape 8: payload did not land; measured strategy found no working layout",
+        "missing libphp base or chunk base"
+      ],
+      "strategy": ""
     }
   },
   "early_consumers": {

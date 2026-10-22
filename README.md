@@ -38,11 +38,18 @@ The default matrix runs against `php:8.4.26-apache` (vulnerable) and
 
 ```sh
 python3 -m unittest -q                       # unit tests
-python3 exploit.py --mode matrix             # full edge-case matrix, both builds
+python3 exploit.py                           # everything: edge cases, exploit, both builds
+python3 exploit.py --mode matrix             # edge-case matrix only
 python3 exploit.py --mode detect             # quick check of one build
-python3 exploit.py --mode matrix --rce       # matrix plus the code execution stage
-python3 exploit.py --mode matrix --output reports/matrix.json
+python3 exploit.py --mode exploit            # code execution stage only
+python3 exploit.py --output reports/matrix.json
 ```
+
+The default run is the full one: every edge case against both the
+vulnerable and the fixed build, the code execution stage, and the
+differential. It takes a while, because the requests are real and the
+emulated images are slow. Narrow it with `--image`, `--profile` and
+`--case`.
 
 Useful flags:
 
@@ -52,6 +59,8 @@ Useful flags:
 | `--profile no-upload-progress` | ini profile, repeatable, see `PROFILES` |
 | `--case oom-part-header-flood` | run only these cases, repeatable |
 | `--rce` | also run the code execution stage |
+| `--no-introspection` | do not read the worker's memory to measure the layout |
+| `--command 'id>/out/p1'` | command for the code execution stage |
 | `--keep` | leave the containers running for inspection |
 | `--output FILE` | write the JSON report |
 
@@ -187,14 +196,38 @@ On the official `php:8.4.26-apache` image the calibration measures index
 841, which is the value the published reference hardcodes. It gets there
 on its own.
 
+The code execution stage measures one more address the same way: a field
+value is copied twice, into a raw buffer and then into a string, and the
+copy the consumer has to point at is the earlier one. Sending the fake
+array's own header as a marker and taking the first match finds it, so
+the stage does not depend on a hardcoded offset either.
+
 ## Code execution stage
 
-`--rce` adds the stage that turns the leaked addresses into command
-execution: a fake `zend_array` whose `pDestructor` points at `zif_system`,
-written over the stale session reference. The command runs as the web
-worker. The stage is opt-in and is calibrated for the official
-`php:8.4.26-apache` image; `--carrier-offset` and `--pads` extend it to
-other builds.
+`--rce` adds the stage that turns the addresses into command execution:
+a fake `zend_array` whose `pDestructor` points at `zif_system`, written
+over the stale session reference. The command runs as the web worker.
+The stage is opt-in and runs two strategies, in order.
+
+**Measured.** The tool reads the worker's own state to learn where its
+allocations land, so it carries no build specific constant. It finds the
+address of the stale session reference in the worker's session globals,
+and it finds the address the fake `zend_array` will live at by sending
+the same request shape with the array's own header as a marker and
+looking for it in the heap. The request shape is still swept, because
+the number of carrier fields decides where the request's allocations
+land. On the official `php:8.4.26-apache` image this finds the same
+address the published reference hardcodes, without being told it.
+
+**Portable.** The fallback uses the offsets the calibration produced and
+sweeps the request shape. `--carrier-offset` and `--pads` still override
+it.
+
+Reading the worker's memory needs `CAP_SYS_PTRACE`, because Apache drops
+to an unprivileged user and that makes the process undumpable. The tool
+adds the capability to the container it creates. The scanner runs as the
+php interpreter the image already ships, so nothing extra is installed.
+`--no-introspection` turns the measured strategy off.
 
 ## Mitigations
 
