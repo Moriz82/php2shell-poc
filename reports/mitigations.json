@@ -1,0 +1,2153 @@
+{
+  "generated_utc": "2026-10-22T02:30:23.192660+00:00",
+  "advisories": [
+    "CVE-2026-109618",
+    "CVE-2026-109619"
+  ],
+  "scope": "containers created by this tool on 127.0.0.1 only",
+  "targets": {
+    "php:8.4.26-apache:default": {
+      "image": "php:8.4.26-apache",
+      "version": "8.4.26",
+      "profile": "default",
+      "release_status": "below-upstream-fix"
+    },
+    "php:8.4.26-apache:no-upload-progress": {
+      "image": "php:8.4.26-apache",
+      "version": "8.4.26",
+      "profile": "no-upload-progress",
+      "release_status": "below-upstream-fix"
+    },
+    "php:8.4.26-apache:unlimited-memory": {
+      "image": "php:8.4.26-apache",
+      "version": "8.4.26",
+      "profile": "unlimited-memory",
+      "release_status": "below-upstream-fix"
+    },
+    "php:8.4.26-apache:errors-off": {
+      "image": "php:8.4.26-apache",
+      "version": "8.4.26",
+      "profile": "errors-off",
+      "release_status": "below-upstream-fix"
+    },
+    "php:8.4.26-apache:small-post": {
+      "image": "php:8.4.26-apache",
+      "version": "8.4.26",
+      "profile": "small-post",
+      "release_status": "below-upstream-fix"
+    },
+    "php:8.4.26-apache:no-session-cookies": {
+      "image": "php:8.4.26-apache",
+      "version": "8.4.26",
+      "profile": "no-session-cookies",
+      "release_status": "below-upstream-fix"
+    },
+    "php:8.4.26-apache:tight-nesting": {
+      "image": "php:8.4.26-apache",
+      "version": "8.4.26",
+      "profile": "tight-nesting",
+      "release_status": "below-upstream-fix"
+    }
+  },
+  "results": {
+    "php:8.4.26-apache:default": [
+      {
+        "case": "oom-large-field",
+        "family": "oom",
+        "title": "oversized field under post_max_size exhausts memory_limit",
+        "status": "VULNERABLE",
+        "evidence": {
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "oversized multipart field",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "out-of-bounds read of freed request memory observed"
+        ]
+      },
+      {
+        "case": "prod-upload-progress-oom",
+        "family": "producer",
+        "title": "OOM during upload progress publishes session state",
+        "status": "VULNERABLE",
+        "evidence": {
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "out-of-bounds read of freed request memory observed"
+        ]
+      },
+      {
+        "case": "cons-session-upload-progress",
+        "family": "consumer",
+        "title": "upload progress consumes stale session state",
+        "status": "VULNERABLE",
+        "evidence": {
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "out-of-bounds read of freed request memory observed"
+        ]
+      },
+      {
+        "case": "cons-htaccess-php-value",
+        "family": "consumer",
+        "title": "pre-initialization INI diagnostic consumes stale state",
+        "status": "VULNERABLE",
+        "evidence": {
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "htaccess-php-value",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "out-of-bounds read of freed request memory observed"
+        ]
+      }
+    ],
+    "php:8.4.26-apache:no-upload-progress": [
+      {
+        "case": "oom-large-field",
+        "family": "oom",
+        "title": "oversized field under post_max_size exhausts memory_limit",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "oversized multipart field",
+          "consumer_label": "session-upload-progress",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; memory exhaustion reached but no stale state read demonstrated"
+        ]
+      },
+      {
+        "case": "prod-upload-progress-oom",
+        "family": "producer",
+        "title": "OOM during upload progress publishes session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; memory exhaustion reached but no stale state read demonstrated"
+        ]
+      },
+      {
+        "case": "cons-session-upload-progress",
+        "family": "consumer",
+        "title": "upload progress consumes stale session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; memory exhaustion reached but no stale state read demonstrated"
+        ]
+      },
+      {
+        "case": "cons-htaccess-php-value",
+        "family": "consumer",
+        "title": "pre-initialization INI diagnostic consumes stale state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "htaccess-php-value",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; memory exhaustion reached but no stale state read demonstrated"
+        ]
+      }
+    ],
+    "php:8.4.26-apache:unlimited-memory": [
+      {
+        "case": "oom-large-field",
+        "family": "oom",
+        "title": "oversized field under post_max_size exhausts memory_limit",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "oversized multipart field",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "prod-upload-progress-oom",
+        "family": "producer",
+        "title": "OOM during upload progress publishes session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "cons-session-upload-progress",
+        "family": "consumer",
+        "title": "upload progress consumes stale session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "cons-htaccess-php-value",
+        "family": "consumer",
+        "title": "pre-initialization INI diagnostic consumes stale state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "htaccess-php-value",
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      }
+    ],
+    "php:8.4.26-apache:errors-off": [
+      {
+        "case": "oom-large-field",
+        "family": "oom",
+        "title": "oversized field under post_max_size exhausts memory_limit",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            500,
+            200
+          ],
+          "producer_label": "oversized multipart field",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "prod-upload-progress-oom",
+        "family": "producer",
+        "title": "OOM during upload progress publishes session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            500,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "cons-session-upload-progress",
+        "family": "consumer",
+        "title": "upload progress consumes stale session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            500,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "cons-htaccess-php-value",
+        "family": "consumer",
+        "title": "pre-initialization INI diagnostic consumes stale state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            500,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "htaccess-php-value",
+          "cookie_bytes": 32,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      }
+    ],
+    "php:8.4.26-apache:small-post": [
+      {
+        "case": "oom-large-field",
+        "family": "oom",
+        "title": "oversized field under post_max_size exhausts memory_limit",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "oversized multipart field",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "prod-upload-progress-oom",
+        "family": "producer",
+        "title": "OOM during upload progress publishes session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "cons-session-upload-progress",
+        "family": "consumer",
+        "title": "upload progress consumes stale session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "cons-htaccess-php-value",
+        "family": "consumer",
+        "title": "pre-initialization INI diagnostic consumes stale state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "htaccess-php-value",
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      }
+    ],
+    "php:8.4.26-apache:no-session-cookies": [
+      {
+        "case": "oom-large-field",
+        "family": "oom",
+        "title": "oversized field under post_max_size exhausts memory_limit",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "oversized multipart field",
+          "consumer_label": "session-upload-progress",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; memory exhaustion reached but no stale state read demonstrated"
+        ]
+      },
+      {
+        "case": "prod-upload-progress-oom",
+        "family": "producer",
+        "title": "OOM during upload progress publishes session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; memory exhaustion reached but no stale state read demonstrated"
+        ]
+      },
+      {
+        "case": "cons-session-upload-progress",
+        "family": "consumer",
+        "title": "upload progress consumes stale session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; memory exhaustion reached but no stale state read demonstrated"
+        ]
+      },
+      {
+        "case": "cons-htaccess-php-value",
+        "family": "consumer",
+        "title": "pre-initialization INI diagnostic consumes stale state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "htaccess-php-value",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; memory exhaustion reached but no stale state read demonstrated"
+        ]
+      }
+    ],
+    "php:8.4.26-apache:tight-nesting": [
+      {
+        "case": "oom-large-field",
+        "family": "oom",
+        "title": "oversized field under post_max_size exhausts memory_limit",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "oversized multipart field",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "prod-upload-progress-oom",
+        "family": "producer",
+        "title": "OOM during upload progress publishes session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "cons-session-upload-progress",
+        "family": "consumer",
+        "title": "upload progress consumes stale session state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "cons-htaccess-php-value",
+        "family": "consumer",
+        "title": "pre-initialization INI diagnostic consumes stale state",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "htaccess-php-value",
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      }
+    ]
+  },
+  "calibration": {
+    "php:8.4.26-apache:default": {
+      "shape": [
+        4,
+        48
+      ],
+      "index": 841,
+      "chunk_base": "0x7ffffc400000",
+      "attempts": 1,
+      "method": "probe",
+      "notes": []
+    },
+    "php:8.4.26-apache:no-upload-progress": {
+      "shape": [
+        0,
+        0
+      ],
+      "index": 0,
+      "chunk_base": "",
+      "attempts": 5,
+      "method": "",
+      "notes": [
+        "no consumer shape reclaimed the freed session id"
+      ]
+    },
+    "php:8.4.26-apache:unlimited-memory": {
+      "shape": [
+        0,
+        0
+      ],
+      "index": 0,
+      "chunk_base": "",
+      "attempts": 5,
+      "method": "",
+      "notes": [
+        "no consumer shape reclaimed the freed session id"
+      ]
+    },
+    "php:8.4.26-apache:errors-off": {
+      "shape": [
+        0,
+        0
+      ],
+      "index": 0,
+      "chunk_base": "",
+      "attempts": 5,
+      "method": "",
+      "notes": [
+        "no consumer shape reclaimed the freed session id"
+      ]
+    },
+    "php:8.4.26-apache:small-post": {
+      "shape": [
+        0,
+        0
+      ],
+      "index": 0,
+      "chunk_base": "",
+      "attempts": 5,
+      "method": "",
+      "notes": [
+        "no consumer shape reclaimed the freed session id"
+      ]
+    },
+    "php:8.4.26-apache:no-session-cookies": {
+      "shape": [
+        0,
+        0
+      ],
+      "index": 0,
+      "chunk_base": "",
+      "attempts": 5,
+      "method": "",
+      "notes": [
+        "no consumer shape reclaimed the freed session id"
+      ]
+    },
+    "php:8.4.26-apache:tight-nesting": {
+      "shape": [
+        0,
+        0
+      ],
+      "index": 0,
+      "chunk_base": "",
+      "attempts": 5,
+      "method": "",
+      "notes": [
+        "no consumer shape reclaimed the freed session id"
+      ]
+    }
+  },
+  "rce": {},
+  "early_consumers": {
+    "php:8.4.26-apache:default": {
+      "htaccess_applies": true,
+      "directives": [
+        {
+          "directive": "auto_detect_line_endings=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: auto_detect_line_endings is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "filter.default=notafilter",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.active=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.exception=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: assert.exception INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "assert.quiet_eval=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.sid_length=48",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.sid_bits_per_character=5",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.use_strict_mode=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.cache_limiter=nocache",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.serialize_handler=php_serialize",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.lazy_write=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "report_memleaks=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "intl.error_level=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "mbstring.http_input=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_input is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.http_output=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_output is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.internal_encoding is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "iconv.input_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.output_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "zend.assertions=99",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "memory_limit=8Q",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: Invalid \"memory_limit\" setting. Invalid quantity \"8Q\": unknown multiplier \"Q\", interpreting as \"8\" for backwards compatibility in Unknown on line 0"
+        },
+        {
+          "directive": "date.timezone=Invalid/Zone",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: PHP Startup: Invalid date.timezone value 'Invalid/Zone', using 'UTC' instead in Unknown on line 0"
+        },
+        {
+          "directive": "allow_url_include=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: Directive 'allow_url_include' is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "zlib.output_compression=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "always_populate_raw_post_data=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "asp_tags=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "precision=14",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "serialize_precision=17",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        }
+      ],
+      "deprecated_in_build": [
+        "auto_detect_line_endings=1",
+        "assert.exception=0",
+        "session.sid_length=48",
+        "session.sid_bits_per_character=5",
+        "mbstring.http_input=ISO-8859-1",
+        "mbstring.http_output=ISO-8859-1",
+        "mbstring.internal_encoding=ISO-8859-1",
+        "memory_limit=8Q",
+        "date.timezone=Invalid/Zone",
+        "allow_url_include=1"
+      ],
+      "raised_per_request": []
+    },
+    "php:8.4.26-apache:no-upload-progress": {
+      "htaccess_applies": true,
+      "directives": [
+        {
+          "directive": "auto_detect_line_endings=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: auto_detect_line_endings is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "filter.default=notafilter",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.active=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.exception=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: assert.exception INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "assert.quiet_eval=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.sid_length=48",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.sid_bits_per_character=5",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.use_strict_mode=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.cache_limiter=nocache",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.serialize_handler=php_serialize",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.lazy_write=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "report_memleaks=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "intl.error_level=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "mbstring.http_input=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_input is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.http_output=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_output is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.internal_encoding is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "iconv.input_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.output_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "zend.assertions=99",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "memory_limit=8Q",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: Invalid \"memory_limit\" setting. Invalid quantity \"8Q\": unknown multiplier \"Q\", interpreting as \"8\" for backwards compatibility in Unknown on line 0"
+        },
+        {
+          "directive": "date.timezone=Invalid/Zone",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: PHP Startup: Invalid date.timezone value 'Invalid/Zone', using 'UTC' instead in Unknown on line 0"
+        },
+        {
+          "directive": "allow_url_include=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: Directive 'allow_url_include' is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "zlib.output_compression=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "always_populate_raw_post_data=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "asp_tags=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "precision=14",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "serialize_precision=17",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        }
+      ],
+      "deprecated_in_build": [
+        "auto_detect_line_endings=1",
+        "assert.exception=0",
+        "session.sid_length=48",
+        "session.sid_bits_per_character=5",
+        "mbstring.http_input=ISO-8859-1",
+        "mbstring.http_output=ISO-8859-1",
+        "mbstring.internal_encoding=ISO-8859-1",
+        "memory_limit=8Q",
+        "date.timezone=Invalid/Zone",
+        "allow_url_include=1"
+      ],
+      "raised_per_request": []
+    },
+    "php:8.4.26-apache:unlimited-memory": {
+      "htaccess_applies": true,
+      "directives": [
+        {
+          "directive": "auto_detect_line_endings=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: auto_detect_line_endings is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "filter.default=notafilter",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.active=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.exception=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: assert.exception INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "assert.quiet_eval=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.sid_length=48",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.sid_bits_per_character=5",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.use_strict_mode=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.cache_limiter=nocache",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.serialize_handler=php_serialize",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.lazy_write=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "report_memleaks=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "intl.error_level=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "mbstring.http_input=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_input is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.http_output=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_output is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.internal_encoding is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "iconv.input_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.output_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "zend.assertions=99",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "memory_limit=8Q",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: Invalid \"memory_limit\" setting. Invalid quantity \"8Q\": unknown multiplier \"Q\", interpreting as \"8\" for backwards compatibility in Unknown on line 0"
+        },
+        {
+          "directive": "date.timezone=Invalid/Zone",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: PHP Startup: Invalid date.timezone value 'Invalid/Zone', using 'UTC' instead in Unknown on line 0"
+        },
+        {
+          "directive": "allow_url_include=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: Directive 'allow_url_include' is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "zlib.output_compression=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "always_populate_raw_post_data=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "asp_tags=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "precision=14",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "serialize_precision=17",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        }
+      ],
+      "deprecated_in_build": [
+        "auto_detect_line_endings=1",
+        "assert.exception=0",
+        "session.sid_length=48",
+        "session.sid_bits_per_character=5",
+        "mbstring.http_input=ISO-8859-1",
+        "mbstring.http_output=ISO-8859-1",
+        "mbstring.internal_encoding=ISO-8859-1",
+        "memory_limit=8Q",
+        "date.timezone=Invalid/Zone",
+        "allow_url_include=1"
+      ],
+      "raised_per_request": []
+    },
+    "php:8.4.26-apache:errors-off": {
+      "htaccess_applies": true,
+      "directives": [
+        {
+          "directive": "auto_detect_line_endings=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: auto_detect_line_endings is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "filter.default=notafilter",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.active=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.exception=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: assert.exception INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "assert.quiet_eval=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.sid_length=48",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.sid_bits_per_character=5",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.use_strict_mode=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.cache_limiter=nocache",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.serialize_handler=php_serialize",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.lazy_write=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "report_memleaks=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "intl.error_level=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "mbstring.http_input=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_input is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.http_output=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_output is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.internal_encoding is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "iconv.input_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.output_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "zend.assertions=99",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "memory_limit=8Q",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: Invalid \"memory_limit\" setting. Invalid quantity \"8Q\": unknown multiplier \"Q\", interpreting as \"8\" for backwards compatibility in Unknown on line 0"
+        },
+        {
+          "directive": "date.timezone=Invalid/Zone",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: PHP Startup: Invalid date.timezone value 'Invalid/Zone', using 'UTC' instead in Unknown on line 0"
+        },
+        {
+          "directive": "allow_url_include=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: Directive 'allow_url_include' is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "zlib.output_compression=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "always_populate_raw_post_data=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "asp_tags=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "precision=14",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "serialize_precision=17",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        }
+      ],
+      "deprecated_in_build": [
+        "auto_detect_line_endings=1",
+        "assert.exception=0",
+        "session.sid_length=48",
+        "session.sid_bits_per_character=5",
+        "mbstring.http_input=ISO-8859-1",
+        "mbstring.http_output=ISO-8859-1",
+        "mbstring.internal_encoding=ISO-8859-1",
+        "memory_limit=8Q",
+        "date.timezone=Invalid/Zone",
+        "allow_url_include=1"
+      ],
+      "raised_per_request": []
+    },
+    "php:8.4.26-apache:small-post": {
+      "htaccess_applies": true,
+      "directives": [
+        {
+          "directive": "auto_detect_line_endings=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: auto_detect_line_endings is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "filter.default=notafilter",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.active=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.exception=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: assert.exception INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "assert.quiet_eval=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.sid_length=48",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.sid_bits_per_character=5",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.use_strict_mode=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.cache_limiter=nocache",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.serialize_handler=php_serialize",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.lazy_write=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "report_memleaks=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "intl.error_level=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "mbstring.http_input=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_input is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.http_output=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_output is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.internal_encoding is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "iconv.input_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.output_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "zend.assertions=99",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "memory_limit=8Q",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: Invalid \"memory_limit\" setting. Invalid quantity \"8Q\": unknown multiplier \"Q\", interpreting as \"8\" for backwards compatibility in Unknown on line 0"
+        },
+        {
+          "directive": "date.timezone=Invalid/Zone",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: PHP Startup: Invalid date.timezone value 'Invalid/Zone', using 'UTC' instead in Unknown on line 0"
+        },
+        {
+          "directive": "allow_url_include=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: Directive 'allow_url_include' is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "zlib.output_compression=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "always_populate_raw_post_data=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "asp_tags=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "precision=14",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "serialize_precision=17",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        }
+      ],
+      "deprecated_in_build": [
+        "auto_detect_line_endings=1",
+        "assert.exception=0",
+        "session.sid_length=48",
+        "session.sid_bits_per_character=5",
+        "mbstring.http_input=ISO-8859-1",
+        "mbstring.http_output=ISO-8859-1",
+        "mbstring.internal_encoding=ISO-8859-1",
+        "memory_limit=8Q",
+        "date.timezone=Invalid/Zone",
+        "allow_url_include=1"
+      ],
+      "raised_per_request": []
+    },
+    "php:8.4.26-apache:no-session-cookies": {
+      "htaccess_applies": true,
+      "directives": [
+        {
+          "directive": "auto_detect_line_endings=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: auto_detect_line_endings is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "filter.default=notafilter",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.active=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.exception=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: assert.exception INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "assert.quiet_eval=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.sid_length=48",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.sid_bits_per_character=5",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.use_strict_mode=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.cache_limiter=nocache",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.serialize_handler=php_serialize",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.lazy_write=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "report_memleaks=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "intl.error_level=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "mbstring.http_input=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_input is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.http_output=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_output is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.internal_encoding is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "iconv.input_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.output_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "zend.assertions=99",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "memory_limit=8Q",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: Invalid \"memory_limit\" setting. Invalid quantity \"8Q\": unknown multiplier \"Q\", interpreting as \"8\" for backwards compatibility in Unknown on line 0"
+        },
+        {
+          "directive": "date.timezone=Invalid/Zone",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: PHP Startup: Invalid date.timezone value 'Invalid/Zone', using 'UTC' instead in Unknown on line 0"
+        },
+        {
+          "directive": "allow_url_include=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: Directive 'allow_url_include' is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "zlib.output_compression=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "always_populate_raw_post_data=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "asp_tags=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "precision=14",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "serialize_precision=17",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        }
+      ],
+      "deprecated_in_build": [
+        "auto_detect_line_endings=1",
+        "assert.exception=0",
+        "session.sid_length=48",
+        "session.sid_bits_per_character=5",
+        "mbstring.http_input=ISO-8859-1",
+        "mbstring.http_output=ISO-8859-1",
+        "mbstring.internal_encoding=ISO-8859-1",
+        "memory_limit=8Q",
+        "date.timezone=Invalid/Zone",
+        "allow_url_include=1"
+      ],
+      "raised_per_request": []
+    },
+    "php:8.4.26-apache:tight-nesting": {
+      "htaccess_applies": true,
+      "directives": [
+        {
+          "directive": "auto_detect_line_endings=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: auto_detect_line_endings is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "filter.default=notafilter",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.active=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.exception=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: assert.exception INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "assert.quiet_eval=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.sid_length=48",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.sid_bits_per_character=5",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.use_strict_mode=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.cache_limiter=nocache",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.serialize_handler=php_serialize",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.lazy_write=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "report_memleaks=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "intl.error_level=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "mbstring.http_input=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_input is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.http_output=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_output is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.internal_encoding is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "iconv.input_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.output_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "zend.assertions=99",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "memory_limit=8Q",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: Invalid \"memory_limit\" setting. Invalid quantity \"8Q\": unknown multiplier \"Q\", interpreting as \"8\" for backwards compatibility in Unknown on line 0"
+        },
+        {
+          "directive": "date.timezone=Invalid/Zone",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: PHP Startup: Invalid date.timezone value 'Invalid/Zone', using 'UTC' instead in Unknown on line 0"
+        },
+        {
+          "directive": "allow_url_include=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: Directive 'allow_url_include' is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "zlib.output_compression=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "always_populate_raw_post_data=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "asp_tags=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "precision=14",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "serialize_precision=17",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        }
+      ],
+      "deprecated_in_build": [
+        "auto_detect_line_endings=1",
+        "assert.exception=0",
+        "session.sid_length=48",
+        "session.sid_bits_per_character=5",
+        "mbstring.http_input=ISO-8859-1",
+        "mbstring.http_output=ISO-8859-1",
+        "mbstring.internal_encoding=ISO-8859-1",
+        "memory_limit=8Q",
+        "date.timezone=Invalid/Zone",
+        "allow_url_include=1"
+      ],
+      "raised_per_request": []
+    }
+  },
+  "summary": {
+    "targets": {
+      "php:8.4.26-apache:default": {
+        "image": "php:8.4.26-apache",
+        "version": "8.4.26",
+        "profile": "default",
+        "release_status": "below-upstream-fix",
+        "counts": {
+          "VULNERABLE": 4
+        }
+      },
+      "php:8.4.26-apache:no-upload-progress": {
+        "image": "php:8.4.26-apache",
+        "version": "8.4.26",
+        "profile": "no-upload-progress",
+        "release_status": "below-upstream-fix",
+        "counts": {
+          "EXPOSED": 4
+        }
+      },
+      "php:8.4.26-apache:unlimited-memory": {
+        "image": "php:8.4.26-apache",
+        "version": "8.4.26",
+        "profile": "unlimited-memory",
+        "release_status": "below-upstream-fix",
+        "counts": {
+          "EXPOSED": 4
+        }
+      },
+      "php:8.4.26-apache:errors-off": {
+        "image": "php:8.4.26-apache",
+        "version": "8.4.26",
+        "profile": "errors-off",
+        "release_status": "below-upstream-fix",
+        "counts": {
+          "EXPOSED": 4
+        }
+      },
+      "php:8.4.26-apache:small-post": {
+        "image": "php:8.4.26-apache",
+        "version": "8.4.26",
+        "profile": "small-post",
+        "release_status": "below-upstream-fix",
+        "counts": {
+          "EXPOSED": 4
+        }
+      },
+      "php:8.4.26-apache:no-session-cookies": {
+        "image": "php:8.4.26-apache",
+        "version": "8.4.26",
+        "profile": "no-session-cookies",
+        "release_status": "below-upstream-fix",
+        "counts": {
+          "EXPOSED": 4
+        }
+      },
+      "php:8.4.26-apache:tight-nesting": {
+        "image": "php:8.4.26-apache",
+        "version": "8.4.26",
+        "profile": "tight-nesting",
+        "release_status": "below-upstream-fix",
+        "counts": {
+          "EXPOSED": 4
+        }
+      }
+    },
+    "differential": [
+      {
+        "case": "oom-large-field",
+        "statuses": {
+          "php:8.4.26-apache:default": "VULNERABLE",
+          "php:8.4.26-apache:no-upload-progress": "EXPOSED",
+          "php:8.4.26-apache:unlimited-memory": "EXPOSED",
+          "php:8.4.26-apache:errors-off": "EXPOSED",
+          "php:8.4.26-apache:small-post": "EXPOSED",
+          "php:8.4.26-apache:no-session-cookies": "EXPOSED",
+          "php:8.4.26-apache:tight-nesting": "EXPOSED"
+        }
+      },
+      {
+        "case": "prod-upload-progress-oom",
+        "statuses": {
+          "php:8.4.26-apache:default": "VULNERABLE",
+          "php:8.4.26-apache:no-upload-progress": "EXPOSED",
+          "php:8.4.26-apache:unlimited-memory": "EXPOSED",
+          "php:8.4.26-apache:errors-off": "EXPOSED",
+          "php:8.4.26-apache:small-post": "EXPOSED",
+          "php:8.4.26-apache:no-session-cookies": "EXPOSED",
+          "php:8.4.26-apache:tight-nesting": "EXPOSED"
+        }
+      },
+      {
+        "case": "cons-session-upload-progress",
+        "statuses": {
+          "php:8.4.26-apache:default": "VULNERABLE",
+          "php:8.4.26-apache:no-upload-progress": "EXPOSED",
+          "php:8.4.26-apache:unlimited-memory": "EXPOSED",
+          "php:8.4.26-apache:errors-off": "EXPOSED",
+          "php:8.4.26-apache:small-post": "EXPOSED",
+          "php:8.4.26-apache:no-session-cookies": "EXPOSED",
+          "php:8.4.26-apache:tight-nesting": "EXPOSED"
+        }
+      },
+      {
+        "case": "cons-htaccess-php-value",
+        "statuses": {
+          "php:8.4.26-apache:default": "VULNERABLE",
+          "php:8.4.26-apache:no-upload-progress": "EXPOSED",
+          "php:8.4.26-apache:unlimited-memory": "EXPOSED",
+          "php:8.4.26-apache:errors-off": "EXPOSED",
+          "php:8.4.26-apache:small-post": "EXPOSED",
+          "php:8.4.26-apache:no-session-cookies": "EXPOSED",
+          "php:8.4.26-apache:tight-nesting": "EXPOSED"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,1347 @@
+{
+  "generated_utc": "2026-10-22T02:18:30.166397+00:00",
+  "advisories": [
+    "CVE-2026-109618",
+    "CVE-2026-109619"
+  ],
+  "scope": "containers created by this tool on 127.0.0.1 only",
+  "targets": {
+    "php:8.4.26-apache:default": {
+      "image": "php:8.4.26-apache",
+      "version": "8.4.26",
+      "profile": "default",
+      "release_status": "below-upstream-fix"
+    },
+    "php:8.4.27-apache:default": {
+      "image": "php:8.4.27-apache",
+      "version": "8.4.27",
+      "profile": "default",
+      "release_status": "at-or-above-upstream-fix"
+    }
+  },
+  "results": {
+    "php:8.4.26-apache:default": [
+      {
+        "case": "oom-large-field",
+        "family": "oom",
+        "title": "oversized field under post_max_size exhausts memory_limit",
+        "status": "VULNERABLE",
+        "evidence": {
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "oversized multipart field",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "out-of-bounds read of freed request memory observed"
+        ]
+      },
+      {
+        "case": "oom-many-large-fields",
+        "family": "oom",
+        "title": "many oversized fields before the limit trips",
+        "status": "EXPOSED",
+        "evidence": {
+          "landing_index": "none",
+          "stale_state": "not-reclaimable",
+          "http_status": [
+            200,
+            0
+          ],
+          "producer_label": "1001 fields of 3000 bytes",
+          "consumer_label": "session-upload-progress",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; this shape exhausts memory but leaves no reclaimable stale state"
+        ]
+      },
+      {
+        "case": "oom-content-length-absent",
+        "family": "oom",
+        "title": "multipart with no declared content length",
+        "status": "VULNERABLE",
+        "evidence": {
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "body with no Content-Length header",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "out-of-bounds read of freed request memory observed"
+        ]
+      },
+      {
+        "case": "oom-content-length-understated",
+        "family": "oom",
+        "title": "multipart whose Content-Length understates the body",
+        "status": "VULNERABLE",
+        "evidence": {
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "Content-Length a quarter of the real body",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "out-of-bounds read of freed request memory observed"
+        ]
+      },
+      {
+        "case": "oom-content-length-zero",
+        "family": "oom",
+        "title": "multipart with Content-Length: 0 and a real body",
+        "status": "VULNERABLE",
+        "evidence": {
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "Content-Length 0, body still sent",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "out-of-bounds read of freed request memory observed"
+        ]
+      },
+      {
+        "case": "oom-part-header-flood",
+        "family": "oom",
+        "title": "one part carrying an unbounded number of headers",
+        "status": "EXPOSED",
+        "evidence": {
+          "landing_index": "none",
+          "stale_state": "not-reclaimable",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "150000 headers in a single part",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; this shape exhausts memory but leaves no reclaimable stale state"
+        ]
+      },
+      {
+        "case": "oom-empty-file-controls",
+        "family": "oom",
+        "title": "empty file controls that do not count towards max_file_uploads",
+        "status": "EXPOSED",
+        "evidence": {
+          "landing_index": "none",
+          "stale_state": "not-reclaimable",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "60000 zero-length file parts",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; this shape exhausts memory but leaves no reclaimable stale state"
+        ]
+      },
+      {
+        "case": "oom-nested-field-names",
+        "family": "oom",
+        "title": "deeply nested field names multiply array construction",
+        "status": "EXPOSED",
+        "evidence": {
+          "landing_index": "none",
+          "stale_state": "not-reclaimable",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "20000 fields nested 16 levels deep",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; this shape exhausts memory but leaves no reclaimable stale state"
+        ]
+      },
+      {
+        "case": "oom-many-vars",
+        "family": "oom",
+        "title": "variable count far past max_input_vars",
+        "status": "EXPOSED",
+        "evidence": {
+          "landing_index": "none",
+          "stale_state": "not-reclaimable",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "5000 variables of 2000 bytes",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release; this shape exhausts memory but leaves no reclaimable stale state"
+        ]
+      },
+      {
+        "case": "prod-upload-progress-oom",
+        "family": "producer",
+        "title": "OOM during upload progress publishes session state",
+        "status": "VULNERABLE",
+        "evidence": {
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "out-of-bounds read of freed request memory observed"
+        ]
+      },
+      {
+        "case": "prod-parse-error",
+        "family": "producer",
+        "title": "parse failure abandons the operation before its reset",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "require of a missing file",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "prod-uncaught-error",
+        "family": "producer",
+        "title": "uncaught exception abandons the operation",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "uncaught RuntimeException",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "prod-max-execution-time",
+        "family": "producer",
+        "title": "execution timeout abandons the operation",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "infinite loop under max_execution_time",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "prod-fatal-destructor",
+        "family": "producer",
+        "title": "fatal error inside a destructor",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "exception thrown from __destruct",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "prod-shutdown-warning",
+        "family": "producer",
+        "title": "nonfatal diagnostic raised after the state was cleared",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "warning raised in a shutdown function",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      },
+      {
+        "case": "cons-session-upload-progress",
+        "family": "consumer",
+        "title": "upload progress consumes stale session state",
+        "status": "VULNERABLE",
+        "evidence": {
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "out-of-bounds read of freed request memory observed"
+        ]
+      },
+      {
+        "case": "cons-htaccess-php-value",
+        "family": "consumer",
+        "title": "pre-initialization INI diagnostic consumes stale state",
+        "status": "VULNERABLE",
+        "evidence": {
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "htaccess-php-value",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "out-of-bounds read of freed request memory observed"
+        ]
+      },
+      {
+        "case": "cons-htaccess-php-value-after-fatal",
+        "family": "consumer",
+        "title": "pre-initialization INI diagnostic after a fatal producer",
+        "status": "EXPOSED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "uncaught RuntimeException",
+          "consumer_label": "htaccess-php-value",
+          "release_status": "below-upstream-fix"
+        },
+        "notes": [
+          "build is below PHP's fixed release"
+        ]
+      }
+    ],
+    "php:8.4.27-apache:default": [
+      {
+        "case": "oom-large-field",
+        "family": "oom",
+        "title": "oversized field under post_max_size exhausts memory_limit",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "oversized multipart field",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "oom-many-large-fields",
+        "family": "oom",
+        "title": "many oversized fields before the limit trips",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "1001 fields of 3000 bytes",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "oom-content-length-absent",
+        "family": "oom",
+        "title": "multipart with no declared content length",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "body with no Content-Length header",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "oom-content-length-understated",
+        "family": "oom",
+        "title": "multipart whose Content-Length understates the body",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "Content-Length a quarter of the real body",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "oom-content-length-zero",
+        "family": "oom",
+        "title": "multipart with Content-Length: 0 and a real body",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "Content-Length 0, body still sent",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "oom-part-header-flood",
+        "family": "oom",
+        "title": "one part carrying an unbounded number of headers",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "150000 headers in a single part",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "oom-empty-file-controls",
+        "family": "oom",
+        "title": "empty file controls that do not count towards max_file_uploads",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "60000 zero-length file parts",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "oom-nested-field-names",
+        "family": "oom",
+        "title": "deeply nested field names multiply array construction",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "20000 fields nested 16 levels deep",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "oom-many-vars",
+        "family": "oom",
+        "title": "variable count far past max_input_vars",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "5000 variables of 2000 bytes",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "startup_diagnostic": true,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "prod-upload-progress-oom",
+        "family": "producer",
+        "title": "OOM during upload progress publishes session state",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "prod-parse-error",
+        "family": "producer",
+        "title": "parse failure abandons the operation before its reset",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "require of a missing file",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "prod-uncaught-error",
+        "family": "producer",
+        "title": "uncaught exception abandons the operation",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "uncaught RuntimeException",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "prod-max-execution-time",
+        "family": "producer",
+        "title": "execution timeout abandons the operation",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "infinite loop under max_execution_time",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "prod-fatal-destructor",
+        "family": "producer",
+        "title": "fatal error inside a destructor",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "exception thrown from __destruct",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "prod-shutdown-warning",
+        "family": "producer",
+        "title": "nonfatal diagnostic raised after the state was cleared",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "warning raised in a shutdown function",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "cons-session-upload-progress",
+        "family": "consumer",
+        "title": "upload progress consumes stale session state",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "session-upload-progress",
+          "cookie_bytes": 32,
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "cons-htaccess-php-value",
+        "family": "consumer",
+        "title": "pre-initialization INI diagnostic consumes stale state",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "OOM inside the upload progress callback",
+          "consumer_label": "htaccess-php-value",
+          "oom_reached": true,
+          "startup_diagnostic": true,
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      },
+      {
+        "case": "cons-htaccess-php-value-after-fatal",
+        "family": "consumer",
+        "title": "pre-initialization INI diagnostic after a fatal producer",
+        "status": "NOT-TRIGGERED",
+        "evidence": {
+          "http_status": [
+            200,
+            200
+          ],
+          "producer_label": "uncaught RuntimeException",
+          "consumer_label": "htaccess-php-value",
+          "release_status": "at-or-above-upstream-fix"
+        },
+        "notes": [
+          "no vulnerability signal observed"
+        ]
+      }
+    ]
+  },
+  "calibration": {
+    "php:8.4.26-apache:default": {
+      "shape": [
+        4,
+        48
+      ],
+      "index": 841,
+      "chunk_base": "0x7ffffc400000",
+      "attempts": 1,
+      "method": "probe",
+      "notes": []
+    },
+    "php:8.4.27-apache:default": {
+      "shape": [
+        0,
+        0
+      ],
+      "index": 0,
+      "chunk_base": "",
+      "attempts": 5,
+      "method": "",
+      "notes": [
+        "no consumer shape reclaimed the freed session id",
+        "no producer width exposed a libphp pointer"
+      ]
+    }
+  },
+  "rce": {
+    "php:8.4.26-apache:default": {
+      "attempted": true,
+      "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+      "notes": [],
+      "htdata": "0x7ffffc4690d8",
+      "zif": "0x7ffffe478370",
+      "attempt": 1
+    },
+    "php:8.4.27-apache:default": {
+      "attempted": false,
+      "proof": "",
+      "notes": [
+        "missing libphp base or zif_system offset"
+      ]
+    }
+  },
+  "early_consumers": {
+    "php:8.4.26-apache:default": {
+      "htaccess_applies": true,
+      "directives": [
+        {
+          "directive": "auto_detect_line_endings=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: auto_detect_line_endings is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "filter.default=notafilter",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.active=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.exception=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: assert.exception INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "assert.quiet_eval=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.sid_length=48",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.sid_bits_per_character=5",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.use_strict_mode=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.cache_limiter=nocache",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.serialize_handler=php_serialize",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.lazy_write=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "report_memleaks=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "intl.error_level=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "mbstring.http_input=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_input is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.http_output=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_output is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.internal_encoding is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "iconv.input_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.output_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "zend.assertions=99",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "memory_limit=8Q",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: Invalid \"memory_limit\" setting. Invalid quantity \"8Q\": unknown multiplier \"Q\", interpreting as \"8\" for backwards compatibility in Unknown on line 0"
+        },
+        {
+          "directive": "date.timezone=Invalid/Zone",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: PHP Startup: Invalid date.timezone value 'Invalid/Zone', using 'UTC' instead in Unknown on line 0"
+        },
+        {
+          "directive": "allow_url_include=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: Directive 'allow_url_include' is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "zlib.output_compression=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "always_populate_raw_post_data=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "asp_tags=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "precision=14",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "serialize_precision=17",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        }
+      ],
+      "deprecated_in_build": [
+        "auto_detect_line_endings=1",
+        "assert.exception=0",
+        "session.sid_length=48",
+        "session.sid_bits_per_character=5",
+        "mbstring.http_input=ISO-8859-1",
+        "mbstring.http_output=ISO-8859-1",
+        "mbstring.internal_encoding=ISO-8859-1",
+        "memory_limit=8Q",
+        "date.timezone=Invalid/Zone",
+        "allow_url_include=1"
+      ],
+      "raised_per_request": []
+    },
+    "php:8.4.27-apache:default": {
+      "htaccess_applies": true,
+      "directives": [
+        {
+          "directive": "auto_detect_line_endings=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: auto_detect_line_endings is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "filter.default=notafilter",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.active=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "assert.exception=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: assert.exception INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "assert.quiet_eval=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.sid_length=48",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.sid_bits_per_character=5",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "session.use_strict_mode=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.cache_limiter=nocache",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.serialize_handler=php_serialize",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "session.lazy_write=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "report_memleaks=0",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "intl.error_level=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "mbstring.http_input=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_input is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.http_output=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.http_output is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "mbstring.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: PHP Startup: Use of mbstring.internal_encoding is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "iconv.input_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.output_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "iconv.internal_encoding=ISO-8859-1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "zend.assertions=99",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "memory_limit=8Q",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: Invalid \"memory_limit\" setting. Invalid quantity \"8Q\": unknown multiplier \"Q\", interpreting as \"8\" for backwards compatibility in Unknown on line 0"
+        },
+        {
+          "directive": "date.timezone=Invalid/Zone",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Warning: PHP Startup: Invalid date.timezone value 'Invalid/Zone', using 'UTC' instead in Unknown on line 0"
+        },
+        {
+          "directive": "allow_url_include=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": "Deprecated: Directive 'allow_url_include' is deprecated in Unknown on line 0"
+        },
+        {
+          "directive": "zlib.output_compression=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "always_populate_raw_post_data=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "asp_tags=1",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "precision=14",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        },
+        {
+          "directive": "serialize_precision=17",
+          "status": 200,
+          "diagnostic": "",
+          "startup_diagnostic": ""
+        }
+      ],
+      "deprecated_in_build": [
+        "auto_detect_line_endings=1",
+        "assert.exception=0",
+        "session.sid_length=48",
+        "session.sid_bits_per_character=5",
+        "mbstring.http_input=ISO-8859-1",
+        "mbstring.http_output=ISO-8859-1",
+        "mbstring.internal_encoding=ISO-8859-1",
+        "memory_limit=8Q",
+        "date.timezone=Invalid/Zone",
+        "allow_url_include=1"
+      ],
+      "raised_per_request": []
+    }
+  },
+  "summary": {
+    "targets": {
+      "php:8.4.26-apache:default": {
+        "image": "php:8.4.26-apache",
+        "version": "8.4.26",
+        "profile": "default",
+        "release_status": "below-upstream-fix",
+        "counts": {
+          "VULNERABLE": 7,
+          "EXPOSED": 11
+        }
+      },
+      "php:8.4.27-apache:default": {
+        "image": "php:8.4.27-apache",
+        "version": "8.4.27",
+        "profile": "default",
+        "release_status": "at-or-above-upstream-fix",
+        "counts": {
+          "NOT-TRIGGERED": 18
+        }
+      }
+    },
+    "differential": [
+      {
+        "case": "oom-large-field",
+        "statuses": {
+          "php:8.4.26-apache:default": "VULNERABLE",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "oom-many-large-fields",
+        "statuses": {
+          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "oom-content-length-absent",
+        "statuses": {
+          "php:8.4.26-apache:default": "VULNERABLE",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "oom-content-length-understated",
+        "statuses": {
+          "php:8.4.26-apache:default": "VULNERABLE",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "oom-content-length-zero",
+        "statuses": {
+          "php:8.4.26-apache:default": "VULNERABLE",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "oom-part-header-flood",
+        "statuses": {
+          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "oom-empty-file-controls",
+        "statuses": {
+          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "oom-nested-field-names",
+        "statuses": {
+          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "oom-many-vars",
+        "statuses": {
+          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "prod-upload-progress-oom",
+        "statuses": {
+          "php:8.4.26-apache:default": "VULNERABLE",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "prod-parse-error",
+        "statuses": {
+          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "prod-uncaught-error",
+        "statuses": {
+          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "prod-max-execution-time",
+        "statuses": {
+          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "prod-fatal-destructor",
+        "statuses": {
+          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "prod-shutdown-warning",
+        "statuses": {
+          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "cons-session-upload-progress",
+        "statuses": {
+          "php:8.4.26-apache:default": "VULNERABLE",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "cons-htaccess-php-value",
+        "statuses": {
+          "php:8.4.26-apache:default": "VULNERABLE",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      },
+      {
+        "case": "cons-htaccess-php-value-after-fatal",
+        "statuses": {
+          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.27-apache:default": "NOT-TRIGGERED"
+        }
+      }
+    ]
+  }
+}

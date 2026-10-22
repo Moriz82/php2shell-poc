@@ -1,3 +1,4 @@
 .patchlab-*/
+.p2s-*/
 __pycache__/
 *.pyc
