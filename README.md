@@ -135,40 +135,54 @@ actually distinguish the two, and they are the ones worth trusting.
 ## What the matrix found on the reference builds
 
 Measured on this machine against the official `php:8.4.26-apache` and
-`php:8.4.27-apache` images.
+`php:8.4.27-apache` images. The last column is the code execution
+stage, run once per case with that case's own exploitation producer.
 
-| case | 8.4.26 | 8.4.27 |
-|---|---|---|
-| `oom-large-field` | VULNERABLE, 4096 byte read | OOM reached, no read |
-| `oom-content-length-absent` | VULNERABLE, 4096 byte read | no signal |
-| `oom-content-length-understated` | VULNERABLE, 4096 byte read | OOM reached, no read |
-| `oom-content-length-zero` | VULNERABLE, 4096 byte read | no signal |
-| `oom-part-header-flood` | OOM reached, no reclaimable state | OOM reached, no read |
-| `oom-empty-file-controls` | no reclaimable state, limit not reached | no signal |
-| `oom-nested-field-names` | no reclaimable state, limit not reached | no signal |
-| `oom-many-vars` | no reclaimable state, limit not reached | no signal |
-| `prod-upload-progress-oom` | VULNERABLE, 4096 byte read | OOM reached, no read |
-| `prod-parse-error` and the other fatal producers | OOM reached, no read | no signal |
-| `cons-session-upload-progress` | VULNERABLE, 4096 byte read | OOM reached, no read |
-| `cons-htaccess-php-value` | VULNERABLE, 4096 byte read | OOM reached, no read |
+| case | 8.4.26 detect | 8.4.27 | exploit |
+|---|---|---|---|
+| `oom-large-field` | VULNERABLE | NOT-TRIGGERED | code execution |
+| `oom-many-large-fields` | EXPOSED | NOT-TRIGGERED | code execution |
+| `oom-content-length-absent` | VULNERABLE | NOT-TRIGGERED | code execution |
+| `oom-content-length-understated` | VULNERABLE | NOT-TRIGGERED | code execution |
+| `oom-content-length-zero` | VULNERABLE | NOT-TRIGGERED | code execution |
+| `oom-part-header-flood` | VULNERABLE | NOT-TRIGGERED | code execution |
+| `oom-empty-file-controls` | EXPOSED | NOT-TRIGGERED | code execution |
+| `oom-nested-field-names` | EXPOSED | NOT-TRIGGERED | code execution |
+| `oom-many-vars` | EXPOSED | NOT-TRIGGERED | code execution |
+| `prod-upload-progress-oom` | VULNERABLE | NOT-TRIGGERED | code execution |
+| `prod-parse-error` | EXPOSED | NOT-TRIGGERED | code execution |
+| `prod-uncaught-error` | EXPOSED | NOT-TRIGGERED | code execution |
+| `prod-max-execution-time` | EXPOSED | NOT-TRIGGERED | code execution |
+| `prod-fatal-destructor` | EXPOSED | NOT-TRIGGERED | code execution |
+| `prod-shutdown-warning` | EXPOSED | NOT-TRIGGERED | code execution |
+| `cons-session-upload-progress` | VULNERABLE | NOT-TRIGGERED | code execution |
+| `cons-htaccess-php-value` | VULNERABLE | NOT-TRIGGERED | code execution |
+| `cons-htaccess-php-value-after-fatal` | EXPOSED | NOT-TRIGGERED | code execution |
 
-Two results are worth calling out.
+All 18 cases differ between the two builds, and all 18 reach code
+execution on the vulnerable one while none does on the fixed one.
 
-**Only some OOM shapes leave exploitable state.** The plain oversized
-field is the one that leaves a session id a consumer can reclaim. The
-header flood reaches the memory limit on its own, which confirms the
-advisory's claim that the headers cost more memory than they occupy on
-the wire, but it leaves nothing reclaimable. The empty file controls, the
-deeply nested names and the many variable shapes neither exhaust the limit
-at these counts nor leave reclaimable state. A sweep of nine consumer
-field widths did not change that. The tool reports this distinction
-instead of collapsing it into "memory was exhausted".
+Three results are worth calling out.
+
+**The two paths do not agree case by case.** Eight cases are detected
+through the out-of-bounds read, and ten are not, yet every one of them
+is exploitable. The detection path needs a stale session *id*, the
+exploitation path needs a stale session *reference*, and a shape that
+exhausts memory without publishing the id can still publish the
+reference. Reporting only the detection result would have understated
+half of them.
 
 **The framing of the request decides whether the OOM strategy is even
 reachable.** A body with no `Content-Length` and a body with a
 `Content-Length` of zero both still reach the parser and still leave
 reclaimable state, so the advisory's framing edge cases are real attack
 paths, not curiosities.
+
+**The header flood reaches the memory limit on its own**, which confirms
+the advisory's claim that the headers cost more memory than they occupy
+on the wire. The empty file controls, the deeply nested names and the
+many variable shapes did not reach the limit at these counts. A sweep of
+nine consumer field widths did not change that.
 
 ## Calibration
 
@@ -202,6 +216,27 @@ copy the consumer has to point at is the earlier one. Sending the fake
 array's own header as a marker and taking the first match finds it, so
 the stage does not depend on a hardcoded offset either.
 
+## Detection and exploitation are two different paths
+
+Both advisories describe state that survives a request boundary, but there
+are two kinds of it, and each needs a different producer.
+
+**Detection.** The producer leaves a stale session id behind with the
+`send_cookie` flag set. The consumer reads that id back, and a forged
+string length turns the read into an out-of-bounds access. This is what
+the matrix measures, and it is what the `heap-oob-read` oracle reports.
+
+**Exploitation.** The producer leaves a stale session *reference* behind.
+The consumer destroys it, and the forged reference makes the destructor
+run an attacker chosen function. This is what the code execution stage
+needs, and it requires the session to have been initialised with a valid
+id.
+
+So every edge case carries two producers: the detection one, and the
+exploitation one, which is the same attack shape with a valid session id
+and the pad fields the carrier needs. A shape can be detectable but not
+exploitable, or the other way round, and the report says which.
+
 ## Code execution stage
 
 `--rce` adds the stage that turns the addresses into command execution:
@@ -222,6 +257,12 @@ address the published reference hardcodes, without being told it.
 **Portable.** The fallback uses the offsets the calibration produced and
 sweeps the request shape. `--carrier-offset` and `--pads` still override
 it.
+
+**Per edge case.** The stage also runs once for every case in the
+matrix, using that case's own exploitation producer, so the report says
+which shapes actually reach code execution and which only exhaust
+memory. `--no-case-exploit` turns that off, `--case-exploit-attempts`
+sets how many request shapes to try per case.
 
 Reading the worker's memory needs `CAP_SYS_PTRACE`, because Apache drops
 to an unprivileged user and that makes the process undumpable. The tool

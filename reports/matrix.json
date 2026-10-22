@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-22T04:52:18.267191+00:00",
+  "generated_utc": "2026-10-22T05:34:55.108487+00:00",
   "advisories": [
     "CVE-2026-109618",
     "CVE-2026-109619"
@@ -143,10 +143,12 @@
         "case": "oom-part-header-flood",
         "family": "oom",
         "title": "one part carrying an unbounded number of headers",
-        "status": "EXPOSED",
+        "status": "VULNERABLE",
         "evidence": {
-          "landing_index": "none",
-          "stale_state": "not-reclaimable",
+          "landing_index": 841,
+          "stale_state": "reclaimable",
+          "heap_oob_read": true,
+          "chunk_base": "0x7ffffc400000",
           "http_status": [
             200,
             200
@@ -159,7 +161,7 @@
           "release_status": "below-upstream-fix"
         },
         "notes": [
-          "build is below PHP's fixed release; the shape reaches the memory limit but leaves no reclaimable stale state"
+          "out-of-bounds read of freed request memory observed"
         ]
       },
       {
@@ -808,7 +810,7 @@
       "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
       "notes": [],
       "strategy": "measured",
-      "attempt": 3,
+      "attempt": 1,
       "reference": "0x7ffffc456180",
       "htdata": "0x7ffffc4690d8",
       "zif": "0x7ffffe478370",
@@ -1199,6 +1201,100 @@
       "raised_per_request": []
     }
   },
+  "exploits": {
+    "php:8.4.26-apache:default": {
+      "oom-large-field": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "oom-many-large-fields": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "oom-content-length-absent": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "oom-content-length-understated": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "oom-content-length-zero": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "oom-part-header-flood": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "oom-empty-file-controls": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "oom-nested-field-names": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "oom-many-vars": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "prod-upload-progress-oom": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "prod-parse-error": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "prod-uncaught-error": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "prod-max-execution-time": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "prod-fatal-destructor": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "prod-shutdown-warning": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "cons-session-upload-progress": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "cons-htaccess-php-value": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      },
+      "cons-htaccess-php-value-after-fatal": {
+        "proof": "uid=33(www-data) gid=33(www-data) groups=33(www-data)",
+        "strategy": "measured",
+        "notes": []
+      }
+    }
+  },
   "summary": {
     "targets": {
       "php:8.4.26-apache:default": {
@@ -1207,8 +1303,8 @@
         "profile": "default",
         "release_status": "below-upstream-fix",
         "counts": {
-          "VULNERABLE": 7,
-          "EXPOSED": 11
+          "VULNERABLE": 8,
+          "EXPOSED": 10
         }
       },
       "php:8.4.27-apache:default": {
@@ -1260,7 +1356,7 @@
       {
         "case": "oom-part-header-flood",
         "statuses": {
-          "php:8.4.26-apache:default": "EXPOSED",
+          "php:8.4.26-apache:default": "VULNERABLE",
           "php:8.4.27-apache:default": "NOT-TRIGGERED"
         }
       },
